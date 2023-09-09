@@ -1,5 +1,7 @@
 export const assetUriPathPlaceholder = '__NAKEDJSX_ASSET_DIR__';
 
+const identity = (a) => a;
+
 // These elements are self closing (i.e. <hr>, not <hr/>)
 const voidElements =
     new Set(
@@ -197,7 +199,13 @@ export class Element
                 child.release();
             }
             else if (typeof child === 'string')
-                html += escapeHtml(child);
+            {
+                if (this.tagName && ["code"].includes(this.tagName)) {
+                    html += escapeHtml(child);
+                } else {
+                    html += identity(child);
+                }
+            }
         }
 
         if (this.tagName)
@@ -235,7 +243,7 @@ export class CachingElementProxy
         if (this.element.toHtml)
             html = this.element.toHtml(renderContext);
         else if (typeof this.element === 'string')
-            html = escapeHtml(this.element);
+            html = identity(this.element);
 
         this.cacheMap.set(this.key, html);
         return html;
@@ -273,7 +281,7 @@ export class CachingHtmlRenderer
             if (element.toHtml)
                 this.#html += element.toHtml(renderContext);
             else if (typeof element === 'string')
-                this.#html += escapeHtml(element);
+                this.#html += identity(element);
         }
 
         // Don't need the elements anymore
