@@ -15,7 +15,7 @@ Element.prototype.appendChild =
         
             return child;
         }
-        else if (typeof child === 'string')
+        else if (! Node.prototype.isPrototypeOf(child))
             return originalAppendChild.call(this, document.createTextNode(child));
         else if (child)
             return originalAppendChild.call(this, child);
